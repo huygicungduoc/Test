@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Du Lịch Khám Phá - Việt Nam & Thế Giới</title>
+    <style>
+        /* Reset cơ bản */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Font chữ dễ đọc hơn */
+            line-height: 1.7; /* Tăng khoảng cách dòng */
+            color: #333;
+            background-color: #f8f9fa; /* Màu nền nhẹ nhàng hơn */
+            /* --- THAY ĐỔI: Điều chỉnh padding-top cho thanh nav cố định --- */
+            padding-top: 60px; /* Ước tính chiều cao của nav */
+        }
+
+        /* Container */
+        /* --- THAY ĐỔI: Bỏ header khỏi selector này vì nó không còn cố định --- */
+        main > section, footer { /* Áp dụng cho các section con trực tiếp của main, và footer */
+            max-width: 1140px; /* Tăng chiều rộng tối đa */
+            margin: 20px auto;
+            padding: 25px; /* Tăng padding */
+            background-color: #fff;
+            border-radius: 10px; /* Bo tròn góc nhiều hơn */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08); /* Tăng bóng đổ */
+        }
+
+        /* --- THAY ĐỔI: Header không còn cố định, dùng style container bình thường --- */
+        header {
+            max-width: 1140px;
+            margin: 20px auto; /* Thêm margin-top để đẩy xuống dưới nav */
+            padding: 25px;
+            background: linear-gradient(to right, #007bff, #0056b3); /* Gradient cho header */
+            color: #fff;
+            text-align: center;
+            border-radius: 10px; /* Áp dụng lại bo tròn */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            /* Bỏ các thuộc tính fixed positioning */
+            /* position: fixed; */
+            /* top: 0; */
+            /* left: 0; */
+            /* right: 0; */
+            /* z-index: 1001; */
+            /* max-width: 100%; */
+            /* border-radius: 0; */
+            /* box-shadow: 0 2px 5px rgba(0,0,0,0.1); */
+        }
+
+
+        header h1 {
+            /* --- THAY ĐỔI: Bỏ margin-top vì header không còn ở sát top --- */
+            margin-bottom: 15px;
+            font-size: 2.2em; /* Điều chỉnh cỡ chữ */
+            /* margin-top: 10px; */
+        }
+
+        /* Thanh điều hướng */
+        nav {
+            background-color: #343a40; /* Màu nền tối hơn cho nav */
+            padding: 12px 0;
+            width: 100%; /* Chiếm toàn bộ chiều rộng */
+            position: fixed; /* Giữ nav cố định khi cuộn */
+            /* --- THAY ĐỔI: Đặt nav ở trên cùng --- */
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000; /* Đảm bảo nav luôn ở trên nội dung */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            text-align: center; /* Căn giữa các mục nav */
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: inline-block; /* Để căn giữa ul */
+        }
+
+        nav ul li {
+            display: inline-block;
+            margin: 0 15px; /* Giảm khoảng cách */
+        }
+
+        nav ul li a {
+            color: #f8f9fa; /* Màu chữ sáng hơn */
+            text-decoration: none;
+            padding: 8px 15px; /* Tăng padding cho link */
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-weight: 500; /* Độ đậm vừa phải */
+            cursor: pointer; /* Biến thành con trỏ khi di chuột */
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active { /* Áp dụng cả khi hover và active */
+            background-color: #0056b3;
+            color: #fff;
+        }
+
+        /* Ẩn tất cả các trang (section) ban đầu */
+        main > section {
+            display: none;
+            /* --- THAY ĐỔI: Không cần margin-top ở đây nữa vì header sẽ đẩy xuống --- */
+            /* margin-top: 30px; */
+        }
+
+        /* Hiển thị trang chủ (home) mặc định */
+        main > section#page-home {
+            display: block;
+        }
+
+
+        /* Tiêu đề phụ trong main */
+        main h2 {
+            color: #0056b3; /* Màu xanh đậm hơn */
+            margin-bottom: 25px; /* Tăng khoảng cách dưới */
+            border-bottom: 3px solid #dee2e6; /* Đường kẻ dày hơn */
+            padding-bottom: 10px;
+            font-size: 1.8em; /* Tăng cỡ chữ */
+        }
+
+        main h3 {
+             color: #343a40; /* Màu tối hơn cho h3 */
+             margin-top: 25px;
+             margin-bottom: 15px;
+             font-size: 1.4em;
+        }
+
+        /* Văn bản giới thiệu */
+        .intro-text {
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Lưới ảnh trang chủ */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Lưới tự động điều chỉnh */
+            gap: 25px; /* Khoảng cách giữa các ảnh */
+            margin-top: 30px;
+        }
+
+        .grid-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden; /* Đảm bảo ảnh không tràn ra ngoài */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .grid-item:hover {
+            transform: translateY(-5px); /* Hiệu ứng nhấc lên khi hover */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .grid-item img {
+            width: 100%;
+            height: 200px; /* Chiều cao cố định cho ảnh */
+            object-fit: cover; /* Cắt ảnh để vừa khung */
+            display: block;
+            border-bottom: 1px solid #eee;
+        }
+
+        .grid-item h3 {
+            font-size: 1.2em;
+            margin: 15px 15px 10px 15px; /* Padding cho tiêu đề */
+            color: #0056b3;
+        }
+
+        .grid-item p {
+            font-size: 0.95em;
+            padding: 0 15px 15px 15px; /* Padding cho mô tả */
+            color: #495057;
+        }
+
+        /* Danh sách Điểm đến & Kinh nghiệm */
+        .destination-list, .experience-list {
+            display: grid;
+            grid-template-columns: 1fr; /* Mặc định 1 cột */
+            gap: 30px;
+        }
+
+        .destination-item, .experience-item {
+            display: flex; /* Sắp xếp ảnh và nội dung cạnh nhau */
+            align-items: flex-start; /* Căn nội dung lên trên */
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            transition: box-shadow 0.3s ease;
+            overflow: hidden; /* Thêm overflow hidden để đề phòng */
+        }
+
+        .destination-item:hover, .experience-item:hover {
+             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+
+        .destination-item img, .experience-item img {
+            width: 150px; /* Kích thước ảnh nhỏ hơn */
+            height: 110px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 20px; /* Khoảng cách giữa ảnh và text */
+            flex-shrink: 0; /* Ngăn ảnh bị co lại */
+        }
+
+        /* --- SỬA LỖI --- */
+        .destination-info, .experience-info {
+            flex-grow: 1; /* Cho phép phần text chiếm hết không gian còn lại */
+            min-width: 0; /* Quan trọng: Giúp text dài có thể xuống dòng trong flex item */
+        }
+        /* --- KẾT THÚC SỬA LỖI --- */
+
+
+        .destination-info h3, .experience-info h3 {
+            margin-top: 0; /* Bỏ margin top cho h3 trong item */
+            margin-bottom: 8px;
+            font-size: 1.25em;
+            color: #0056b3;
+        }
+
+        .destination-info p, .experience-info p {
+            margin-bottom: 0;
+            color: #495057;
+            font-size: 0.95em;
+            word-wrap: break-word; /* Đảm bảo từ dài cũng xuống dòng */
+        }
+
+        /* Phần Lưu ý chung */
+        .general-tips {
+            margin-top: 40px;
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #007bff;
+        }
+        .general-tips h2 {
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            color: #0056b3;
+            border-bottom: none; /* Bỏ đường gạch chân */
+        }
+        .general-tips ul {
+            list-style: disc; /* Dùng dấu chấm tròn */
+            margin-left: 25px;
+            color: #343a40;
+        }
+        .general-tips li {
+            margin-bottom: 10px;
+        }
+
+        /* Danh sách Blog */
+        .blog-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .blog-post-summary {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: box-shadow 0.3s ease;
+        }
+        .blog-post-summary:hover {
+             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+
+        .blog-post-summary h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-size: 1.4em;
+            color: #0056b3;
+        }
+
+        .blog-post-summary p em { /* Định dạng ngày đăng */
+            font-size: 0.85em;
+            color: #6c757d;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .blog-post-summary p {
+            margin-bottom: 15px;
+            color: #495057;
+        }
+
+        .blog-post-summary a {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 8px 18px; /* Tăng padding nút */
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+        .blog-post-summary a:hover {
+            background-color: #0056b3;
+        }
+
+        /* Trang Liên hệ */
+        .contact-info {
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        .contact-info p {
+            margin-bottom: 10px;
+        }
+        .contact-info strong {
+            color: #343a40;
+        }
+        .contact-info a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+        .contact-info ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .contact-info ul li {
+            display: inline-block;
+            margin-right: 15px;
+        }
+
+        .contact-form {
+            margin-top: 20px;
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+        }
+        .contact-form .form-group {
+            margin-bottom: 20px;
+        }
+        .contact-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+        .contact-form input[type="text"],
+        .contact-form input[type="email"],
+        .contact-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .contact-form input[type="text"]:focus,
+        .contact-form input[type="email"]:focus,
+        .contact-form textarea:focus {
+             border-color: #80bdff;
+             outline: 0;
+             box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .contact-form textarea {
+            resize: vertical; /* Cho phép thay đổi chiều cao textarea */
+        }
+
+        .contact-form button[type="submit"] {
+            background-color: #28a745; /* Màu xanh lá cây cho nút gửi */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .contact-form button[type="submit"]:hover {
+            background-color: #218838; /* Màu xanh lá cây đậm hơn khi hover */
+        }
+
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #343a40;
+            color: #f8f9fa;
+            font-size: 0.9em;
+            border-radius: 10px; /* Bo tròn cả footer */
+            max-width: 1140px; /* Giữ footer trong container */
+            margin-left: auto; /* Căn giữa footer */
+            margin-right: auto;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+             /* --- THAY ĐỔI: Bỏ header khỏi selector này --- */
+             main > section, footer, nav ul {
+                max-width: 95%; /* Giảm chiều rộng trên màn hình nhỏ hơn */
+            }
+            /* --- THAY ĐỔI: Thêm style riêng cho header --- */
+            header {
+                 max-width: 95%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                 /* --- THAY ĐỔI: Điều chỉnh padding-top cho nav cố định --- */
+                padding-top: 50px; /* Chiều cao nav có thể nhỏ hơn trên mobile */
+            }
+             header h1 {
+                font-size: 1.8em;
+            }
+             nav {
+                 /* --- THAY ĐỔI: Nav vẫn ở top: 0 --- */
+                /* top: 65px; */
+                padding: 8px 0;
+            }
+             nav ul li {
+                margin: 0 8px; /* Giảm khoảng cách nav item */
+            }
+             nav ul li a {
+                 padding: 6px 10px;
+                 font-size: 0.9em;
+             }
+            .image-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Điều chỉnh cho màn hình nhỏ hơn */
+                gap: 15px;
+            }
+             .destination-item, .experience-item {
+                flex-direction: column; /* Chuyển sang layout dọc */
+                align-items: center; /* Căn giữa */
+                text-align: center;
+            }
+             .destination-item img, .experience-item img {
+                width: 80%; /* Ảnh rộng hơn */
+                height: auto; /* Chiều cao tự động */
+                margin-right: 0;
+                margin-bottom: 15px; /* Khoảng cách dưới ảnh */
+            }
+            .destination-info h3, .experience-info h3 {
+                font-size: 1.15em;
+            }
+            main > section {
+                margin-top: 20px;
+                padding: 20px;
+            }
+            main h2 {
+                font-size: 1.6em;
+            }
+             /* --- THAY ĐỔI: Bỏ header khỏi selector này --- */
+             main > section, footer {
+                padding: 20px;
+            }
+             /* --- THAY ĐỔI: Thêm style riêng cho header --- */
+             header {
+                 padding: 20px;
+             }
+        }
+
+        @media (max-width: 480px) {
+             body {
+                 /* --- THAY ĐỔI: Điều chỉnh lại padding --- */
+                 padding-top: 48px; /* Chiều cao nav có thể nhỏ hơn nữa */
+             }
+             header {
+                 padding: 15px; /* Giảm padding header */
+                 margin-top: 15px; /* Giảm margin top */
+             }
+             header h1 {
+                font-size: 1.5em;
+                margin-bottom: 10px;
+             }
+             nav {
+                 /* --- THAY ĐỔI: Nav vẫn ở top: 0 --- */
+                 /* top: 58px; */
+             }
+             nav ul li {
+                margin: 0 5px;
+             }
+             nav ul li a {
+                 padding: 5px 8px;
+                 font-size: 0.8em;
+             }
+            .image-grid {
+                grid-template-columns: 1fr; /* 1 cột trên màn hình rất nhỏ */
+            }
+             .destination-item img, .experience-item img {
+                width: 100%; /* Ảnh chiếm toàn bộ chiều rộng */
+            }
+             .contact-form button[type="submit"] {
+                width: 100%; /* Nút gửi chiếm toàn bộ chiều rộng */
+                font-size: 1em;
+                padding: 10px 20px;
+            }
+             /* --- THAY ĐỔI: Bỏ header khỏi selector này --- */
+             main > section, footer {
+                padding: 15px;
+            }
+             /* --- THAY ĐỔI: Thêm style riêng cho header --- */
+             header {
+                 padding: 15px;
+             }
+            main h2 {
+                font-size: 1.4em;
+                margin-bottom: 20px;
+            }
+             main h3 {
+                 font-size: 1.2em;
+             }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#home" data-target="page-home" class="nav-link active">Trang chủ</a></li>
+            <li><a href="#destinations" data-target="page-destinations" class="nav-link">Điểm đến</a></li>
+            <li><a href="#experience" data-target="page-experience" class="nav-link">Kinh nghiệm</a></li>
+            <li><a href="#blog" data-target="page-blog" class="nav-link">Blog</a></li>
+            <li><a href="#contact" data-target="page-contact" class="nav-link">Liên hệ</a></li>
+        </ul>
+    </nav>
+
+    <header>
+        <h1>Khám Phá Việt Nam & Thế Giới</h1>
+        </header>
+
+    <main>
+        <section id="page-home">
+            <h2>Chào mừng đến với trang Du Lịch Khám Phá!</h2>
+            <p class="intro-text">Nơi chia sẻ những thông tin hữu ích, kinh nghiệm thực tế và những câu chuyện thú vị về các chuyến đi khắp Việt Nam và thế giới. Khám phá vẻ đẹp tiềm ẩn và lên kế hoạch cho hành trình tiếp theo của bạn!</p>
+
+            <div class="image-grid">
+                <div class="grid-item">
+                    <img src="./trangchu/Du-Lich-Vinh-Ha-Long-01.jpg" alt="Ảnh minh họa 1 - Vịnh Hạ Long" onerror="this.onerror=null;this.src='https://placehold.co/600x400/EEE/31343C?text=Image+Not+Found';">
+                    <h3>Khám phá Vịnh Hạ Long</h3>
+                    <p>Chia sẻ kinh nghiệm đi thuyền kayak, thăm hang động và thưởng thức hải sản tươi ngon tại kỳ quan thiên nhiên thế giới.</p>
+                </div>
+                <div class="grid-item">
+                    <img src="./trangchu/phocohoian.jpeg" alt="Ảnh minh họa 2 - Hội An" onerror="this.onerror=null;this.src='https://placehold.co/600x400/EEE/31343C?text=Image+Not+Found';">
+                    <h3>Lạc bước ở Hội An</h3>
+                    <p>Câu chuyện về vẻ đẹp cổ kính, những chiếc đèn lồng lung linh và ẩm thực đặc sắc của phố Hội.</p>
+                </div>
+                <div class="grid-item">
+                    <img src="./trangchu/ruongbacthang.jpg" alt="Ảnh minh họa 3 - Ruộng bậc thang" onerror="this.onerror=null;this.src='https://placehold.co/600x400/EEE/31343C?text=Image+Not+Found';">
+                    <h3>Mùa vàng Tây Bắc</h3>
+                    <p>Thông tin hữu ích về thời điểm đẹp nhất để ngắm lúa chín và kinh nghiệm trekking các cung đường hùng vĩ.</p>
+                </div>
+                <div class="grid-item">
+                    <img src="./trangchu/phuquoc.jpg" alt="Ảnh minh họa 4 - Phú Quốc" onerror="this.onerror=null;this.src='https://placehold.co/600x400/EEE/31343C?text=Image+Not+Found';">
+                    <h3>Nghỉ dưỡng tại Phú Quốc</h3>
+                    <p>Kinh nghiệm chọn resort, các bãi biển đẹp không thể bỏ qua và hoạt động lặn ngắm san hô thú vị.</p>
+                </div>
+                 <div class="grid-item">
+                    <img src="./trangchu/kyoto.jpg" alt="Ảnh minh họa 5 - Kyoto" onerror="this.onerror=null;this.src='https://placehold.co/600x400/EEE/31343C?text=Image+Not+Found';">
+                    <h3>Trải nghiệm văn hóa Kyoto</h3>
+                    <p>Câu chuyện về những ngôi đền cổ kính, vườn Nhật Bản thanh bình và nghệ thuật trà đạo tinh tế ở Nhật Bản.</p>
+                </div>
+                 <div class="grid-item">
+                    <img src="./trangchu/paris.jpg" alt="Ảnh minh họa 6 - Paris" onerror="this.onerror=null;this.src='https://placehold.co/600x400/EEE/31343C?text=Image+Not+Found';">
+                    <h3>Paris hoa lệ</h3>
+                    <p>Tình yêu lãng mạn khi tham quan tháp Eiffel, bảo tàng Louvre và dạo bước trên đại lộ Champs-Élysées.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-destinations">
+            <h2>Các Điểm Đến Hấp Dẫn</h2>
+            <p>Khám phá thông tin chi tiết về những địa danh nổi tiếng và các hoạt động thú vị tại mỗi nơi.</p>
+
+            <div class="destination-list">
+                <article class="destination-item">
+                    <img src="./diemden/anh-ha-noi.jpg" alt="Ảnh Hà Nội" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                    <div class="destination-info">
+                        <h3>Hà Nội, Việt Nam</h3>
+                        <p>Đặt chân đến Hà Nội, bạn sẽ ngay lập tức bị cuốn hút bởi vẻ đẹp Hồ Gươm và Tháp Rùa cổ kính. Tiếp đó, Văn Miếu - Quốc Tử Giám sẽ đưa bạn ngược dòng lịch sử, khám phá nền văn hiến lâu đời. Lang thang trong khu phố cổ, bạn sẽ cảm nhận được nhịp sống đặc trưng và thưởng thức những món ăn ngon khó cưỡng. Hà Nội chắc chắn sẽ để lại trong bạn những kỷ niệm khó phai.</p>
+                    </div>
+                </article>
+                <article class="destination-item">
+                     <img src="./diemden/halong.jpg" alt="Ảnh Vịnh Hạ Long" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="destination-info">
+                        <h3>Vịnh Hạ Long, Quảng Ninh, Việt Nam</h3>
+                        <p>Chào mừng đến với Vịnh Hạ Long, kỳ quan thiên nhiên tuyệt mỹ của Việt Nam! Hàng ngàn đảo đá vôi sừng sững nhô lên từ làn nước xanh ngọc bích, tạo nên một bức tranh hùng vĩ và thơ mộng. Du thuyền nhẹ nhàng lướt qua những hang động kỳ ảo, nơi nhũ đá và măng đá kiến tạo nên bao hình thù độc đáo. Vịnh Hạ Long chắc chắn sẽ chinh phục trái tim mọi du khách bởi vẻ đẹp huyền ảo và tráng lệ của mình.</p>
+                    </div>
+                </article>
+                <article class="destination-item">
+                    <img src="./diemden/sapa.jpg" alt="Ảnh Sapa" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="destination-info">
+                        <h3>Sapa, Lào Cai, Việt Nam</h3>
+                        <p>Sapa hiện ra như một bức tranh tuyệt đẹp, nơi những ngọn núi trùng điệp ôm trọn thung lũng mờ sương. Ruộng bậc thang tầng tầng lớp lớp như những nấc thang lên thiên đường, khoe sắc vàng óng ả mùa lúa chín hay xanh mướt vào mùa xuân. Đến đây, bạn không chỉ được chiêm ngưỡng cảnh sắc thiên nhiên hùng vĩ mà còn khám phá nét văn hóa đặc sắc của đồng bào H'Mông, Dao Đỏ... với những trang phục rực rỡ và những phiên chợ đậm đà bản sắc. Sapa chắc chắn sẽ là một điểm đến làm say lòng bất cứ ai yêu vẻ đẹp của núi rừng và văn hóa.</p>
+                     </div>
+                </article>
+                 <article class="destination-item">
+                     <img src="./diemden/hue.jpg" alt="Ảnh Huế" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="destination-info">
+                        <h3>Huế, Việt Nam</h3>
+                        <p>cố đô mộng mơ và trầm mặc bên dòng sông Hương thơ mộng! Kinh thành Huế uy nghiêm với những lăng tẩm cổ kính, mỗi công trình là một câu chuyện lịch sử và kiến trúc độc đáo. Dạo bước trên những con đường rợp bóng cây xanh, bạn sẽ cảm nhận được nhịp sống chậm rãi và thanh bình nơi đây. Ẩm thực Huế tinh tế và đậm đà bản sắc cũng là một trải nghiệm khó quên trong hành trình khám phá vùng đất cố đô này.</p>
+                     </div>
+                </article>
+                 <article class="destination-item">
+                    <img src="./diemden/danang.jpg" alt="Ảnh Đà Nẵng" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                    <div class="destination-info">
+                        <h3>Đà Nẵng, Việt Nam</h3>
+                        <p>Đà Nẵng chào đón bạn bằng những bãi biển trải dài cát trắng mịn màng, nơi bạn có thể thả mình vào làn nước biển xanh biếc và tận hưởng ánh nắng vàng rực rỡ. Cây cầu Rồng huyền thoại vươn mình qua sông Hàn thơ mộng, tỏa sáng lung linh mỗi khi đêm về. Ghé thăm Ngũ Hành Sơn kỳ vĩ, bạn sẽ được khám phá những hang động huyền bí và chiêm ngưỡng toàn cảnh thành phố biển từ trên cao. Đà Nẵng là sự hòa quyện tuyệt vời giữa vẻ đẹp thiên nhiên và nhịp sống hiện đại, hứa hẹn mang đến những trải nghiệm đáng nhớ.</p>
+                    </div>
+                </article>
+                <article class="destination-item">
+                     <img src="./diemden/hoian.jpg" alt="Ảnh Hội An" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="destination-info">
+                        <h3>Hội An, Quảng Nam, Việt Nam</h3>
+                        <p>Phố cổ Hội An như một thước phim quay chậm, đưa bạn lạc vào không gian kiến trúc cổ kính với những mái ngói rêu phong và những bức tường vàng nhuốm màu thời gian. Dạo bước dưới những chiếc đèn lồng rực rỡ sắc màu vào buổi tối, bạn sẽ cảm nhận được vẻ đẹp lung linh và huyền ảo của phố cổ. Thưởng thức ẩm thực đường phố đặc sắc và mua sắm những món đồ thủ công tinh xảo cũng là những trải nghiệm thú vị không thể bỏ qua. Hội An mang trong mình một vẻ đẹp yên bình, cổ kính nhưng vẫn đầy sức sống, níu chân bất cứ ai đặt chân đến đây.</p>
+                     </div>
+                </article>
+                <article class="destination-item">
+                     <img src="./diemden/nhatrang.jpg" alt="Ảnh Nha Trang" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="destination-info">
+                        <h3>Nha Trang, Khánh Hòa, Việt Nam</h3>
+                        <p>Nha Trang vẫy gọi bạn đến với những bãi biển tuyệt đẹp, nơi cát trắng ôm ấp làn nước biển trong xanh như ngọc bích. Lặn biển ngắm san hô rực rỡ sắc màu sẽ mở ra một thế giới đại dương kỳ diệu ngay trước mắt bạn. Thưởng thức hải sản tươi ngon và khám phá những hòn đảo hoang sơ sẽ mang đến những trải nghiệm thư giãn và đáng nhớ. Nha Trang là sự kết hợp hoàn hảo giữa vẻ đẹp tự nhiên hoang sơ và nhịp sống sôi động của một thành phố biển năng động.</p>
+                     </div>
+                </article>
+                <article class="destination-item">
+                     <img src="./diemden/dalat.jpg" alt="Ảnh Đà Lạt" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="destination-info">
+                        <h3>Đà Lạt, Lâm Đồng, Việt Nam</h3>
+                        <p>Đà Lạt mộng mơ chào đón bạn bằng không khí se lạnh đặc trưng và những đồi thông xanh rì rào trong gió. Thành phố ngàn hoa khoe sắc rực rỡ quanh năm, từ cẩm tú cầu dịu dàng đến dã quỳ vàng rực rỡ. Hồ Xuân Hương thơ mộng như một chiếc gương soi bóng những hàng cây và kiến trúc Pháp cổ kính. Đến Đà Lạt, bạn sẽ tìm thấy sự bình yên trong khung cảnh thiên nhiên lãng mạn và những câu chuyện tình yêu ngọt ngào.</p>
+                     </div>
+                </article>
+                <article class="destination-item">
+                     <img src="./diemden/tphcm.jpg" alt="Ảnh TP. Hồ Chí Minh" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="destination-info">
+                        <h3>TP. Hồ Chí Minh, Việt Nam</h3>
+                        <p>Sài Gòn năng động chào đón bạn bằng nhịp sống hối hả và sự pha trộn độc đáo giữa nét truyền thống và hiện đại. Những tòa nhà cao tầng sừng sững vươn mình giữa những con phố nhộn nhịp, xen lẫn những ngôi chùa cổ kính và những khu chợ sầm uất. Ẩm thực đường phố đa dạng và phong phú sẽ đánh thức mọi giác quan của bạn. TP. Hồ Chí Minh là một thành phố không ngủ, luôn tràn đầy năng lượng và những điều bất ngờ thú vị để khám phá.</p>
+                     </div>
+                </article>
+                <article class="destination-item">
+                     <img src="./diemden/phu-quoc.jpg" alt="Ảnh Phú Quốc" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="destination-info">
+                        <h3>Phú Quốc, Kiên Giang, Việt Nam</h3>
+                        <p>Đảo ngọc Phú Quốc hiện ra như một viên ngọc bích giữa biển khơi, với những bãi cát trắng mịn trải dài và làn nước biển xanh trong vắt đến tận đáy. Khám phá những khu rừng nguyên sinh hoang sơ, nơi ẩn chứa bao điều kỳ thú của thiên nhiên. Thưởng thức hải sản tươi ngon vừa được đánh bắt và ngắm hoàng hôn lãng mạn trên biển sẽ là những trải nghiệm khó quên. Phú Quốc là điểm đến lý tưởng cho những ai tìm kiếm một thiên đường nghỉ dưỡng thanh bình và xinh đẹp.</p>
+                     </div>
+                </article>
+                 <article class="destination-item">
+                     <img src="./diemden/bangkok.jpg" alt="Ảnh Bangkok" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="destination-info">
+                        <h3>Bangkok, Thái Lan</h3>
+                        <p>Chào mừng đến với Bangkok, thủ đô sôi động và đầy màu sắc của Thái Lan! Những ngôi đền dát vàng lộng lẫy soi bóng xuống dòng sông Chao Phraya huyền thoại, nơi những chiếc thuyền đuôi dài tấp nập ngược xuôi. Khám phá những khu chợ nổi độc đáo, nơi bạn có thể thưởng thức ẩm thực đường phố hấp dẫn và mua sắm những món đồ thủ công độc đáo. Bangkok là sự pha trộn quyến rũ giữa nét truyền thống văn hóa đặc sắc và nhịp sống hiện đại náo nhiệt, hứa hẹn mang đến những trải nghiệm khó quên.</p>
+                     </div>
+                </article>
+                 <article class="destination-item">
+                     <img src="./diemden/bali.jpg" alt="Ảnh Bali" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="destination-info">
+                        <h3>Bali, Indonesia</h3>
+                        <p>Đến với Bali, hòn đảo của những vị thần, bạn sẽ choáng ngợp trước vẻ đẹp thiên nhiên kỳ diệu và nền văn hóa Hindu độc đáo. Những thửa ruộng bậc thang xanh mướt trải dài như những tác phẩm nghệ thuật, những ngôi đền cổ kính uy nghiêm ẩn mình giữa rừng cây nhiệt đới. Thưởng thức điệu múa truyền thống uyển chuyển và hòa mình vào không khí tâm linh thanh tịnh. Bali là sự kết hợp hoàn hảo giữa vẻ đẹp tự nhiên, văn hóa đặc sắc và sự hiếu khách nồng hậu của người dân địa phương, một điểm đến chữa lành tâm hồn và khơi gợi cảm hứng.</p>
+                     </div>
+                 </article>
+                 </div>
+        </section>
+
+        <section id="page-experience">
+            <h2>Chia Sẻ Kinh Nghiệm Du Lịch Bổ Ích</h2>
+            <p>Tổng hợp những mẹo hay, bí quyết và lời khuyên giúp chuyến đi của bạn thuận lợi và đáng nhớ hơn.</p>
+
+            <div class="experience-list">
+                 <article class="experience-item">
+                    <img src="./kinhnghiem/vali.jpg" alt="Ảnh chuẩn bị hành lý" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                    <div class="experience-info">
+                        <h3>Mẹo chuẩn bị hành lý gọn nhẹ mà hiệu quả</h3>
+                        <p>Cách lựa chọn vật dụng cần thiết, sắp xếp khoa học và tránh mang thừa đồ.</p>
+                    </div>
+                </article>
+                <article class="experience-item">
+                     <img src="./kinhnghiem/maybay.jpg" alt="Ảnh săn vé máy bay" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="experience-info">
+                        <h3>Bí quyết săn vé máy bay giá rẻ như chuyên gia</h3>
+                        <p>Thời điểm vàng để đặt vé, công cụ so sánh giá và các chương trình khuyến mãi.</p>
+                     </div>
+                </article>
+                <article class="experience-item">
+                     <img src="./kinhnghiem/ks.jpg" alt="Ảnh đặt phòng khách sạn" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="experience-info">
+                        <h3>Kinh nghiệm đặt phòng khách sạn/homestay giá tốt</h3>
+                        <p>Sử dụng ứng dụng nào, đọc đánh giá và những lưu ý khi lựa chọn nơi ở.</p>
+                     </div>
+                </article>
+                <article class="experience-item">
+                     <img src="./kinhnghiem/map.jpg" alt="Ảnh lên kế hoạch lịch trình" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="experience-info">
+                        <h3>Cách lên kế hoạch lịch trình du lịch chi tiết</h3>
+                        <p>Phân bổ thời gian hợp lý, lựa chọn điểm tham quan và dự trù kinh phí.</p>
+                     </div>
+                </article>
+                <article class="experience-item">
+                     <img src="./kinhnghiem/di1minh.jpg" alt="Ảnh du lịch một mình" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="experience-info">
+                        <h3>Lưu ý an toàn và mẹo hay khi đi du lịch một mình</h3>
+                        <p>Chuẩn bị tâm lý, giữ liên lạc, bảo vệ tài sản và cách hòa nhập với người bản địa.</p>
+                     </div>
+                </article>
+                <article class="experience-item">
+                    <img src="./kinhnghiem/tiente.jpeg" alt="Ảnh quản lý chi tiêu" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                    <div class="experience-info">
+                        <h3>Quản lý chi tiêu hiệu quả khi đi du lịch</h3>
+                        <p>Cách đổi tiền, sử dụng thẻ tín dụng, ghi chép chi tiêu và tiết kiệm chi phí.</p>
+                    </div>
+                </article>
+                <article class="experience-item">
+                     <img src="./kinhnghiem/amthuc.jpg" alt="Ảnh thưởng thức ẩm thực" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="experience-info">
+                        <h3>Khám phá ẩm thực địa phương: Nên thử món gì?</h3>
+                        <p>Cách tìm quán ăn ngon, những món đặc sản không thể bỏ lỡ và lưu ý vệ sinh.</p>
+                     </div>
+                </article>
+                <article class="experience-item">
+                     <img src="./kinhnghiem/dt.jpg" alt="Ảnh chụp ảnh du lịch" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="experience-info">
+                        <h3>Mẹo chụp ảnh du lịch đẹp bằng điện thoại</h3>
+                        <p>Tận dụng ánh sáng, chọn góc chụp, chỉnh sửa ảnh cơ bản và lưu giữ khoảnh khắc.</p>
+                     </div>
+                </article>
+                <article class="experience-item">
+                     <img src="./kinhnghiem/sim.jpg" alt="Ảnh sử dụng internet" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="experience-info">
+                        <h3>Giữ kết nối internet khi du lịch nước ngoài</h3>
+                        <p>Mua sim du lịch, sử dụng esim, roaming hay thuê cục phát wifi?</p>
+                     </div>
+                </article>
+                <article class="experience-item">
+                     <img src="./kinhnghiem/yte.jpg" alt="Ảnh chuẩn bị y tế" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="experience-info">
+                        <h3>Chuẩn bị tủ thuốc y tế cá nhân cho chuyến đi</h3>
+                        <p>Các loại thuốc cơ bản cần mang theo và cách xử lý các vấn đề sức khỏe thường gặp.</p>
+                     </div>
+                </article>
+                 <article class="experience-item">
+                     <img src="./kinhnghiem/giaotiep.jpg" alt="Ảnh giao tiếp" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="experience-info">
+                        <h3>Vượt qua rào cản ngôn ngữ khi du lịch</h3>
+                        <p>Học vài câu giao tiếp cơ bản, sử dụng ứng dụng dịch thuật và ngôn ngữ cơ thể.</p>
+                     </div>
+                 </article>
+                 <article class="experience-item">
+                     <img src="./kinhnghiem/vanhoa.jpg" alt="Ảnh tôn trọng văn hóa" onerror="this.onerror=null;this.src='https://placehold.co/200x150/EEE/31343C?text=Not+Found';">
+                     <div class="experience-info">
+                        <h3>Ứng xử và tôn trọng văn hóa địa phương</h3>
+                        <p>Tìm hiểu về phong tục tập quán, trang phục phù hợp và những điều nên/không nên làm.</p>
+                     </div>
+                 </article>
+                 </div>
+
+            <aside class="general-tips">
+                <h2>Một Số Lưu Ý Chung Quan Trọng</h2>
+                <ul>
+                    <li><strong>Kiểm tra giấy tờ tùy thân:</strong> Đảm bảo hộ chiếu/CMND/CCCD còn hạn sử dụng. Sao lưu các giấy tờ quan trọng.</li>
+                    <li><strong>Bảo hiểm du lịch:</strong> Cân nhắc mua bảo hiểm du lịch, đặc biệt khi đi nước ngoài hoặc tham gia các hoạt động mạo hiểm.</li>
+                    <li><strong>Thông báo lịch trình:</strong> Cho người thân hoặc bạn bè biết về kế hoạch di chuyển của bạn.</li>
+                    <li><strong>Cảnh giác với lừa đảo:</strong> Tìm hiểu về các chiêu trò lừa đảo phổ biến tại điểm đến và luôn cẩn trọng.</li>
+                    <li><strong>Thời tiết:</strong> Kiểm tra dự báo thời tiết để chuẩn bị trang phục và vật dụng phù hợp.</li>
+                    <li><strong>Sức khỏe:</strong> Chuẩn bị sức khỏe tốt trước chuyến đi, đặc biệt nếu có bệnh nền.</li>
+                    <li><strong>Luôn giữ thái độ tích cực:</strong> Du lịch đôi khi có những sự cố nhỏ, hãy giữ bình tĩnh và tìm cách giải quyết.</li>
+                </ul>
+            </aside>
+        </section>
+
+        <section id="page-blog">
+             <h2>Blog Du Lịch: Những Câu Chuyện Hành Trình</h2>
+            <p>Đọc những bài viết chia sẻ chi tiết về các chuyến đi, cảm nhận cá nhân và những khám phá thú vị.</p>
+
+            <div class="blog-list">
+                <article class="blog-post-summary">
+                    <h3>Hành trình khám phá Hà Giang mùa lúa chín vàng rực</h3>
+                    <p><em>Ngày đăng: 20/04/2025</em></p>
+                    <p>Một chuyến đi đầy cảm xúc với những cung đường đèo hùng vĩ, ruộng bậc thang vàng óng và gặp gỡ những con người thân thiện...</p>
+                    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" target="_blank" rel="noopener noreferrer">Đọc thêm...</a>
+                </article>
+                <article class="blog-post-summary">
+                    <h3>Ẩm thực đường phố Sài Gòn: Ăn gì, ở đâu?</h3>
+                     <p><em>Ngày đăng: 15/04/2025</em></p>
+                    <p>Tổng hợp những món ăn vặt ngon "nhức nách", từ bánh tráng trộn, phá lấu đến hủ tiếu gõ làm nên tên tuổi ẩm thực Sài thành...</p>
+                     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" target="_blank" rel="noopener noreferrer">Đọc thêm...</a>
+                </article>
+                 <article class="blog-post-summary">
+                    <h3>Lặn biển ngắm san hô ở Phú Quốc: Trải nghiệm khó quên</h3>
+                     <p><em>Ngày đăng: 10/04/2025</em></p>
+                    <p>Khám phá thế giới đại dương đầy màu sắc tại Nam đảo, những lưu ý an toàn và kinh nghiệm chọn tour lặn uy tín...</p>
+                     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" target="_blank" rel="noopener noreferrer">Đọc thêm...</a>
+                </article>
+                 <article class="blog-post-summary">
+                    <h3>Một ngày lạc giữa lòng Cố đô Huế mộng mơ</h3>
+                     <p><em>Ngày đăng: 05/04/2025</em></p>
+                    <p>Dạo bước trong Đại Nội, thăm lăng Khải Định uy nghi và thưởng thức món bún bò Huế chuẩn vị...</p>
+                     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" target="_blank" rel="noopener noreferrer">Đọc thêm...</a>
+                </article>
+                <article class="blog-post-summary">
+                    <h3>Trekking Tà Năng - Phan Dũng: Cung đường huyền thoại</h3>
+                     <p><em>Ngày đăng: 01/04/2025</em></p>
+                    <p>Chia sẻ kinh nghiệm chuẩn bị, những khó khăn và vẻ đẹp tuyệt mỹ của một trong những cung đường trekking đẹp nhất Việt Nam...</p>
+                     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" target="_blank" rel="noopener noreferrer">Đọc thêm...</a>
+                </article>
+                 <article class="blog-post-summary">
+                    <h3>Bali Diary: Hành trình tìm về sự bình yên</h3>
+                     <p><em>Ngày đăng: 28/03/2025</em></p>
+                    <p>Những ngày ở Ubud, khám phá đền chùa linh thiêng, tập yoga giữa thiên nhiên và cảm nhận năng lượng tích cực...</p>
+                     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" target="_blank" rel="noopener noreferrer">Đọc thêm...</a>
+                </article>
+                 <article class="blog-post-summary">
+                    <h3>Chiang Mai, Thái Lan: Không chỉ có chùa chiền</h3>
+                     <p><em>Ngày đăng: 25/03/2025</em></p>
+                    <p>Khám phá khu phố cổ, tham gia lễ hội đèn trời Yi Peng, trải nghiệm lớp học nấu ăn và thăm trại voi thân thiện...</p>
+                     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" target="_blank" rel="noopener noreferrer">Đọc thêm...</a>
+                </article>
+                 <article class="blog-post-summary">
+                    <h3>Tokyo hiện đại và truyền thống đan xen</h3>
+                     <p><em>Ngày đăng: 22/03/2025</em></p>
+                    <p>Từ khu Shibuya náo nhiệt đến đền Asakusa cổ kính, trải nghiệm tàu điện ngầm và thưởng thức sushi tươi ngon...</p>
+                     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" target="_blank" rel="noopener noreferrer">Đọc thêm...</a>
+                </article>
+                 <article class="blog-post-summary">
+                    <h3>Lang thang ở Paris: Những góc nhìn khác lạ</h3>
+                     <p><em>Ngày đăng: 19/03/2025</em></p>
+                    <p>Khám phá khu phố Montmartre nghệ sĩ, đi thuyền trên sông Seine và tìm những quán cà phê nhỏ xinh ẩn mình...</p>
+                     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" target="_blank" rel="noopener noreferrer">Đọc thêm...</a>
+                </article>
+                 <article class="blog-post-summary">
+                    <h3>Chuyến đi bụi khám phá miền Tây sông nước</h3>
+                     <p><em>Ngày đăng: 16/03/2025</em></p>
+                    <p>Đi chợ nổi Cái Răng, thăm vườn trái cây, nghe đờn ca tài tử và cảm nhận sự hào sảng của người dân miền Tây...</p>
+                     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" target="_blank" rel="noopener noreferrer">Đọc thêm...</a>
+                </article>
+                 <article class="blog-post-summary">
+                    <h3>Săn mây Tà Xùa: Chạm vào biển mây</h3>
+                     <p><em>Ngày đăng: 13/03/2025</em></p>
+                    <p>Kinh nghiệm di chuyển, thời điểm săn mây lý tưởng và những khoảnh khắc kỳ diệu trên "sống lưng khủng long"...</p>
+                     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" target="_blank" rel="noopener noreferrer">Đọc thêm...</a>
+                </article>
+                 <article class="blog-post-summary">
+                    <h3>Du lịch Đài Loan tự túc: Lịch trình gợi ý 7 ngày</h3>
+                     <p><em>Ngày đăng: 10/03/2025</em></p>
+                    <p>Khám phá Đài Bắc sôi động, làng cổ Cửu Phần, hồ Nhật Nguyệt thơ mộng và thưởng thức trà sữa trân châu chính gốc...</p>
+                     <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley" target="_blank" rel="noopener noreferrer">Đọc thêm...</a>
+                </article>
+                </div>
+        </section>
+
+        <section id="page-contact">
+             <h2>Liên Hệ Với Chúng Tôi</h2>
+            <p>Chúng tôi luôn sẵn lòng lắng nghe những câu hỏi, góp ý hoặc cơ hội hợp tác từ bạn. Vui lòng liên hệ qua các kênh dưới đây:</p>
+
+            <div class="contact-info">
+                 <p><strong>Email:</strong> <a href="mailto:contact@dulichkhampha.com">contact@dulichkhampha.com</a> </p>
+                 <p><strong>Điện thoại:</strong> 0123 456 789 </p>
+                 <p><strong>Địa chỉ:</strong> 123 Đường ABC, Quận XYZ, Thành phố HCM </p>
+                 <p><strong>Mạng xã hội:</strong></p>
+                 <ul>
+                     <li><a href="#" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+                     <li><a href="#" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                     <li><a href="#" target="_blank" rel="noopener noreferrer">Youtube</a></li>
+                 </ul>
+            </div>
+
+            <h3>Gửi tin nhắn trực tiếp</h3>
+            <form action="#" method="post" class="contact-form" onsubmit="alert('Chức năng gửi form chưa được cài đặt!'); return false;">
+                <div class="form-group">
+                    <label for="name">Họ tên:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                 <div class="form-group">
+                    <label for="subject">Chủ đề:</label>
+                    <input type="text" id="subject" name="subject">
+                </div>
+                <div class="form-group">
+                    <label for="message">Nội dung tin nhắn:</label>
+                    <textarea id="message" name="message" rows="6" required></textarea>
+                </div>
+                <button type="submit">Gửi Liên Hệ</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Du Lịch Khám Phá. Bảo lưu mọi quyền.</p>
+    </footer>
+
+    <script>
+        // Lấy tất cả các link điều hướng và các section trang
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pages = document.querySelectorAll('main > section');
+
+        // Hàm để hiển thị trang dựa trên target ID
+        function showPage(targetId) {
+            // Ẩn tất cả các trang
+            pages.forEach(page => {
+                page.style.display = 'none';
+            });
+
+            // Hiển thị trang mục tiêu
+            const targetPage = document.getElementById(targetId);
+            if (targetPage) {
+                targetPage.style.display = 'block';
+                window.scrollTo(0, 0); // Cuộn lên đầu trang khi chuyển trang
+            }
+
+            // Cập nhật lớp 'active' cho link điều hướng
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.target === targetId) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Thêm sự kiện click cho mỗi link điều hướng
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault(); // Ngăn hành vi mặc định của thẻ a
+                const targetId = this.dataset.target; // Lấy ID trang mục tiêu từ data-target
+                showPage(targetId);
+
+                // Cập nhật URL hash mà không tải lại trang (tùy chọn)
+                history.pushState(null, '', this.getAttribute('href'));
+            });
+        });
+
+        // Xử lý khi người dùng điều hướng bằng nút back/forward của trình duyệt (tùy chọn)
+        window.addEventListener('popstate', function() {
+            const hash = window.location.hash;
+            let targetId = 'page-home'; // Mặc định là trang chủ
+            if (hash) {
+                // Tìm link có href khớp với hash
+                const activeLink = document.querySelector(`.nav-link[href="${hash}"]`);
+                if (activeLink) {
+                    targetId = activeLink.dataset.target;
+                }
+            }
+            showPage(targetId);
+        });
+
+        // Hiển thị trang dựa trên URL hash khi tải trang lần đầu (tùy chọn)
+        document.addEventListener('DOMContentLoaded', () => {
+             const initialHash = window.location.hash;
+             let initialTargetId = 'page-home';
+             if (initialHash) {
+                 const initialLink = document.querySelector(`.nav-link[href="${initialHash}"]`);
+                 if (initialLink) {
+                     initialTargetId = initialLink.dataset.target;
+                 }
+             }
+             showPage(initialTargetId);
+        });
+
+    </script>
+</body>
+</html>
